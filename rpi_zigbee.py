@@ -29,6 +29,7 @@ try:
                 print("data_value : " + str(data_value))
                 data_type = 0
                 data_value = 0
+
 except KeyboardInterrupt:
-    xbee.write('Bye from Raspberry Pi\n')
+    xbee.write('Bye from Raspberry Pi')
     xbee.close()

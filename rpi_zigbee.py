@@ -4,8 +4,8 @@ import mysql.connector
 cnn = mysql.connector.connect(user='root', password='magic0426', host='127.0.0.1', database='project')
 cursor = cnn.cursor()
 
-add_temp = ("insert into temperature (device_num, temp) values(%s, %s)")
-add_humi = ("insert into humidity (device_num, humi) values(%s, %s)")
+add_temp = ("insert into temperature (device_num, temp, time) values(%s, %s, now())")
+add_humi = ("insert into humidity (device_num, humi, time) values(%s, %s, now())")
 
 xbee = serial.Serial('/dev/ttyUSB0', 9600)
 

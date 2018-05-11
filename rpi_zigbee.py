@@ -10,7 +10,7 @@ add_temp = ("insert into temperature (device_num, temp, time) values(%s, %s, now
 add_humi = ("insert into humidity (device_num, humi, time) values(%s, %s, now())")
 
 #Serial Communication start
-xbee = serial.Serial('/dev/ttyUSB0', 9600)
+xbee = serial.Serial('/dev/ttyACM0', 9600)
 
 string = 'Hello from Raspberry Pi'
 print ('Sending %s' %string)

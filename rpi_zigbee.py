@@ -16,9 +16,11 @@ string = 'Hello from Raspberry Pi'
 print ('Sending %s' %string)
 xbee.write('Hello from Raspberry Pi')
 
+#select data to read.
 type = 1
 data = 0
 under = 0
+#read complete data
 data_under = 0
 data_type = 0
 data_value = 0
@@ -26,26 +28,26 @@ data_value = 0
 try:
     while True:
         obj = xbee.readline()
-        for i in obj:
-            
-                
-            if data_type == 1:
-                cursor.execute(add_temp, (1, data_value))
-                print("temperature insert complete\n")
-            elif data_type == 2:
-                cursor.execute(add_humi, (1, data_value))
-                print("humidity insert complete\n")
-            
-            data_type = 0
-            data_value = 0
-            data_under = 0
-            cnn.commit()
+        #get data from obj.
+        getData(obj)
+        #save data to DB
+        insertDB(data_type, data_value)
+        
+        data_type = 0
+        data_value = 0
+        data_under = 0
+        cnn.commit()
+        xbee.flushInput()
 
-def getData(dataString) :
-    for i in dataString:
-        if ('0' <= i <= '9') & (type == 1) :
-                data_type = data_type*10 + int(i)
-        if ('0' <= i <= '9') & (data == 1) :
+except KeyboardInterrupt:
+    xbee.write('Bye from Raspberry Pi')
+    xbee.close()
+
+def getData(str_data) :
+    for i in str_data:
+        if('0' <= i <= '9') & (type == 1):
+            data_type = data_type*10 + int(i)
+        if('0' <= i <= '9') & (data == 1):
             if(under == 1):
                 data_under = data_under*10 + int(i)
             else:
@@ -60,12 +62,15 @@ def getData(dataString) :
             type = 1
             data = 0
             under = 0
-            data_value += str(data_under)
+
+            data_value = str(data_value) + str(data_under)
             print("data_type : " + str(data_type))
             print("data_value : " + str(data_value))
-        
 
-except KeyboardInterrupt:
-    xbee.write('Bye from Raspberry Pi')
-    xbee.close()
-
+def insertDB(insert_type, insert_val):
+    if insert_type == 1:
+        cursor.execute(add_temp, (1, data_value))
+        print("temperature insert complete\n")
+    elif insert_type == 2:
+        cursor.excute(add_humi, (2, data_value))
+        print("humidity insert complete\n")

@@ -25,24 +25,6 @@ data_under = 0
 data_type = 0
 data_value = 0
 
-try:
-    while True:
-        obj = xbee.readline()
-        #get data from obj.
-        getData(obj)
-        #save data to DB
-        insertDB(data_type, data_value)
-        
-        data_type = 0
-        data_value = 0
-        data_under = 0
-        cnn.commit()
-        xbee.flushInput()
-
-except KeyboardInterrupt:
-    xbee.write('Bye from Raspberry Pi')
-    xbee.close()
-
 def getData(str_data) :
     for i in str_data:
         if('0' <= i <= '9') & (type == 1):
@@ -74,3 +56,23 @@ def insertDB(insert_type, insert_val):
     elif insert_type == 2:
         cursor.excute(add_humi, (2, data_value))
         print("humidity insert complete\n")
+
+
+try:
+    while True:
+        if xbee.in_waiting:
+            obj = xbee.readline()
+            #get data from obj.
+            getData(obj)
+            #save data to DB
+            insertDB(data_type, data_value)
+            
+            data_type = 0
+            data_value = 0
+            data_under = 0
+            cnn.commit()
+            xbee.flushInput()
+
+except KeyboardInterrupt:
+    xbee.write('Bye from Raspberry Pi')
+    xbee.close()

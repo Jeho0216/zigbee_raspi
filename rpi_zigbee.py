@@ -1,8 +1,8 @@
 import serial, sys
-import mysql.connector
+import MySQLdb
 
 #connect to the DB
-cnn = mysql.connector.connect(user='root', password='magic0426', host='127.0.0.1', database='project')
+cnn = MySQLdb.connect("127.0.0.1", "homestead", "secret", "myapp")
 cursor = cnn.cursor()
 
 #executable SQL Query.

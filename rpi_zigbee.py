@@ -25,19 +25,53 @@ data_under = 0
 data_type = 0
 data_value = 0
 
+def getData(str_data) :
+    for i in str_data:
+        if('0' <= i <= '9') & (type == 1):
+            data_type = data_type*10 + int(i)
+        if('0' <= i <= '9') & (data == 1):
+            if(under == 1):
+                data_under = data_under*10 + int(i)
+            else:
+                data_value = data_value*10 + int(i)
+        if i == ',':
+            type = 0
+            data = 1
+        if i == '.':
+            under = 1
+            data_value = str(data_value) + '.'
+        if i == ';':
+            type = 1
+            data = 0
+            under = 0
+
+            data_value = str(data_value) + str(data_under)
+            print("data_type : " + str(data_type))
+            print("data_value : " + str(data_value))
+
+def insertDB(insert_type, insert_val):
+    if insert_type == 1:
+        cursor.execute(add_temp, (1, data_value))
+        print("temperature insert complete\n")
+    elif insert_type == 2:
+        cursor.excute(add_humi, (2, data_value))
+        print("humidity insert complete\n")
+
+
 try:
     while True:
-        obj = xbee.readline()
-        #get data from obj.
-        getData(obj)
-        #save data to DB
-        insertDB(data_type, data_value)
-        
-        data_type = 0
-        data_value = 0
-        data_under = 0
-        cnn.commit()
-        xbee.flushInput()
+        if xbee.in_waiting:
+            obj = xbee.readline()
+            #get data from obj.
+            getData(obj)
+            #save data to DB
+            insertDB(data_type, data_value)
+            
+            data_type = 0
+            data_value = 0
+            data_under = 0
+            cnn.commit()
+            xbee.flushInput()
 
 except KeyboardInterrupt:
     xbee.write('Bye from Raspberry Pi')
